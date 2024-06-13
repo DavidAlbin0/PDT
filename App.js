@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
+import {useEffect, useState} from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Linking, BackHandler } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as Animatable from 'react-native-animatable';
+import Login from './screens/login';
+import ProfileScreen from './screens/ProfileScreen';
 
 const window = Dimensions.get('window');
 
-export default function App() {
+function HomeScreen() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -15,7 +21,7 @@ export default function App() {
       const { status } = await Camera.requestPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
-    
+
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       if (showCamera) {
         setShowCamera(false);
@@ -37,8 +43,7 @@ export default function App() {
       console.log(`Contenido del código QR: ${data}`);
     }
 
-    // Reiniciar el estado de 'scanned' después de manejar el escaneo
-    setTimeout(() => setScanned(false), 3000); // Reiniciar después de 3 segundos (puedes ajustar este valor)
+    setTimeout(() => setScanned(false), 3000);
   };
 
   const activateCamera = () => {
@@ -78,6 +83,29 @@ export default function App() {
       )}
       {scanned && <Text style={styles.scanText}>Escaneado exitosamente</Text>}
     </View>
+  );
+}
+
+function SettingsScreen() {
+  return (
+    <View style={styles.container}>
+      <Text>Settings Screen</Text>
+    </View>
+  );
+}
+
+
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Settings" component={Login} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
